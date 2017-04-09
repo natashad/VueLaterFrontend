@@ -1,10 +1,10 @@
 <template>
-    <div>
-        <h1>NagBag</h1>
-        <div v-if="sessionInfo.token">
-            Welcome {{sessionInfo.username}}, <button @click="logout">Logout</button>      
-        </div>
+    <div class="header">
+        <h1 class="logo">NagBag</h1>
         
+        <div v-if="sessionInfo.token" class="myAccount">
+            Welcome {{sessionInfo.username}} <button @click="logout">Logout</button>      
+        </div>
     </div>
 </template>
 
@@ -14,8 +14,10 @@ import {EventBus} from '../main.js';
 export default {
     data() {
         return {
-            sessionInfo: {}
         }
+    },
+    props: {
+        sessionInfo: Object,
     },
     methods: {
         logout(event) {
@@ -23,16 +25,19 @@ export default {
             EventBus.$emit('sessionDestroyed')
         }
     },
-    created() {
-        EventBus.$on('sessionCreated', sessionInfo => {
-            this.sessionInfo = sessionInfo;
-        });
-        EventBus.$on('sessionDestroyed', () => {
-            this.sessionInfo = {};
-        })
-    }
 }
 </script>
 
-<style>
+<style scoped>
+    .header {
+        border-bottom: 5px solid black;
+        padding: 10px;
+    }
+
+    .logo {
+        display: inline-block;
+    }
+    .myAccount {
+        float: right;
+    }
 </style>

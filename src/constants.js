@@ -5,6 +5,7 @@ export default {
     USER_ENDPOINT: "user",
     USERS_ENDPOINT: "users",
     INBOX_ENDPOINT: "inbox",
+    OUTBOX_ENDPOINT: "outbox",
     LOGIN_ENDPOINT: "login",
 
     USER_PASSWORD: 'password',

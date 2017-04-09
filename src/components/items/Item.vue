@@ -1,6 +1,8 @@
 <template>
     <div>
-        {{itemUrl}}
+        {{itemUrl}} 
+        <span v-if="itemSender">(from: {{itemSender}})</span>
+        <span v-else>(to: {{itemOwner}})</span>
     </div>
 </template>
 
@@ -8,6 +10,8 @@
 export default {
     props: {
         itemUrl: String,
+        itemOwner: String,
+        itemSender: String,
     }
 }
 </script>
