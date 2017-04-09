@@ -1,14 +1,14 @@
 <template>
     <div>
         INBOX:
-        <div v-if="sessionInfo.token" class="itemContainer">
-            <app-item v-for="item in items" :key="item.id" :itemSender="item.sender" :itemUrl="item.url"></app-item>
+        <div class="itemContainer">
+            <app-item v-for="item in inboxItems" :key="item.id" :itemSender="item.sender" :itemUrl="item.url"></app-item>
         </div>
         
         <br />
         OUTBOX:
-        <div v-if="sessionInfo.token" class="itemContainer">
-            <app-item v-for="item in items" :key="item.id" :itemOwner="item.owner" :itemUrl="item.url"></app-item>
+        <div class="itemContainer">
+            <app-item v-for="item in outboxItems" :key="item.id" :itemOwner="item.owner" :itemUrl="item.url"></app-item>
         </div>
     </div>
 </template>
@@ -21,7 +21,8 @@ import {EventBus} from '../../main.js';
 export default{
     data() {
         return {
-            items: [],
+            inboxItems: [],
+            outboxItems: []
         }
     },
     props: {
@@ -48,7 +49,7 @@ export default{
             }
             if (this.sessionInfo.token) {
                 this.$http(options).then((response) => {
-                    this.items = response.body;
+                    this.inboxItems = response.body;
                 }, (response) => {
                     console.log("Error: Couldn't get inbox");
                 });
@@ -66,7 +67,7 @@ export default{
             }
             if (this.sessionInfo.token) {
                 this.$http(options).then((response) => {
-                    this.items = response.body;
+                    this.outboxItems = response.body;
                 }, (response) => {
                     console.log("Error: Couldn't get inbox");
                 });

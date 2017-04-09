@@ -34,11 +34,25 @@ export default {
     'appLogin': Login
   }, 
   created() {
+
+    if (this.$cookie.get('sessionToken')) {
+      console.log("Setting session info from cookie!");
+      this.sessionInfo = {
+        token: this.$cookie.get('sessionToken'),
+        username: this.$cookie.get('username')
+      }
+    }
+
     EventBus.$on('sessionCreated', (sessionInfo) => {
       this.sessionInfo = sessionInfo;
+      this.$cookie.set('sessionToken', sessionInfo.token);
+      this.$cookie.set('username', sessionInfo.username);
+      
     });
     EventBus.$on('sessionDestroyed', () => {
       this.sessionInfo = {};
+      this.$cookie.delete('sessionToken');
+      this.$cookie.delete('username');
     });
   }
 }
