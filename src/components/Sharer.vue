@@ -1,27 +1,31 @@
 <template>
     <div>
         <div class="shareBar">
-            <button class="formTrigger" @click="isSendNag=true">Send a Nag</button>
+            <button class="formTrigger" @click="isSendNag=true">Nag a Friend</button>
         </div>
         <div v-if="isSendNag">
             <div class="modalMask" @click="isSendNag=false">
                 <div class="modal" @click.stop>
-                    <h2>Send a Nag</h2>
+                    <h2>Nag a Friend</h2>
                     <div>
                         <label for="sendTo">Send to:</label><br />
-                        <input if="sendTo" type="text" v-model="recipient"/>
+                        <input id="sendTo" type="text" v-model="recipient"/>
                     </div>
                     <div>
                         <label for="url">URL:</label><br />
-                        <input if="url" type="text" v-model="url"/>
+                        <input id="url" type="text" v-model="url"/>
                     </div>
                     <div>
-                        <label for="title">Title (Optional):</label><br />
-                        <input if="title" type="text" v-model="title"/>
+                        <label for="type">Type (Optional):</label><br />
+                        <input id="type" v-model="type" type="text" />
                     </div>
                     <div>
-                        <label for="desc">Description (Optional):</label><br />
-                        <textarea id="desc" v-model="desc" rows="5"></textarea>
+                        <label for="duration">Duration (Optional):</label><br />
+                        <input id="duration" v-model="duration" type="text" />
+                    </div>
+                    <div>
+                        <label for="notes">Notes (Optional):</label><br />
+                        <textarea id="notes" v-model="notes" rows="5"></textarea>
                     </div>
                     <button class="formTrigger" @click="send">
                         Send
@@ -36,6 +40,7 @@
 
 <script>
 import Consts from '../constants.js';
+import {EventBus} from '../main.js';
 
 export default {
     data() {
@@ -43,8 +48,9 @@ export default {
             isSendNag: false,
             recipient: '',
             url: '',
-            title: '',
-            desc: '',
+            type: '',
+            duration: '',
+            notes: '',
         }
     },
     props: {
@@ -52,7 +58,6 @@ export default {
     },
     methods: {
         send() {
-            console.log("SENDING");
             var options = {
                 url: Consts.BASE_API_URL + "/" + Consts.ITEMS_ENDPOINT,
                 method: 'POST',
@@ -60,13 +65,21 @@ export default {
                 {
                     Authorization: 'Basic ' + btoa(this.sessionInfo.token + ":unused")
                 },
-                body: {owner: this.recipient, url: this.url}
+                body: {owner: this.recipient, 
+                        url: this.url,
+                        type: this.type,
+                        duration: this.duration,
+                        note: this.notes}
             }
             this.$http(options).then((response) => {
                 this.close();
-                //TODO: update the client if the event belongs to them.
+                EventBus.$emit(Consts.EVENT_ITEM_CREATED)
             }, response => {
                 console.log("Error: coudn't send item");
+
+                if (response.status == 401) {
+                    EventBus.$emit(Consts.EVENT_SESSION_DESTROYED);
+                }
             });
         },
         close() {

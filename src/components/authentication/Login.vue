@@ -1,5 +1,5 @@
 <template>
-    <div class="authenticationContainer">
+    <div class="authenticationContainer" :class="{isLoading: isLoading}">
         <div  v-if="createNewAccount" class="authType">
             <h2>Create an Account:</h2>
         </div>
@@ -8,12 +8,22 @@
         </div>
         <div class="loginBox">
             <div>
-                <label for="username">Username:</label><br />
-                <input type="text" v-model="username" id="username" />
+                <label for="email">Email:</label><br />
+                <input type="text" v-model="email" id="email" />
+            </div>
+            <div v-if="createNewAccount">
+                <div>
+                    <label for="fname">First Name: </label><br />
+                    <input type="text" v-model="firstName" id="fname" />
+                </div>
+                <div>
+                    <label for="lname">Last Name: </label><br />
+                    <input type="text" v-model="lastName" id="lname" />
+                </div>
             </div>
             <div>
                 <label for="password">Password:</label><br />
-                <input type="password" v-model="password" id="password" />
+                <input type="password" v-model="password" id="password" @keyup.enter="validateAndSend" />
             </div>
 
             <div v-if="createNewAccount" class="buttonDiv">
@@ -44,8 +54,11 @@ export default {
         return {
             createNewAccount: false,
             loggedIn: false,            
-            username: '',
+            email: '',
             password: '',
+            isLoading: false,
+            firstName: '',
+            lastName: '',
         }
     },
     methods: {
@@ -55,7 +68,10 @@ export default {
         },
         createAccount() {
             this.$http.post(Consts.BASE_API_URL + "/" + Consts.USERS_ENDPOINT, 
-                {username: this.username, password: this.password}).then(
+                {email: this.email, 
+                 password: this.password, 
+                 first_name: this.firstName,
+                 last_name: this.lastName }).then(
                     (response) => {
                         this.login();
                     }, 
@@ -64,25 +80,33 @@ export default {
                     }
             );
         },
+        validateAndSend() {
+            if (this.email && this.password) {
+                this.login();
+            }
+        },
         login() {
+            this.isLoading = true;
             var options = {
                 url: Consts.BASE_API_URL + "/" + Consts.LOGIN_ENDPOINT,
                 method: 'GET',
                 headers: 
                 {
-                    Authorization: 'Basic ' + btoa(this.username + ":" + this.password)
+                    Authorization: 'Basic ' + btoa(this.email + ":" + this.password)
                 }
             }
             this.$http(options).then(
                 (response) => {
                     var token = response.body.token;
                     if (token) {
-                        EventBus.$emit('sessionCreated', {token: token, username: this.username});
-                        this.username = '';
+                        EventBus.$emit(Consts.EVENT_SESSION_CREATED, {token: token, fname: this.firstName});
+                        this.email = '';
                         this.password = '';
                     }
+                    this.isLoading=false;
                 }, 
                 (response) => {
+                    this.isLoading=false
                     console.log("Error: Couldn't log in user.");
                 }
             )
@@ -140,5 +164,9 @@ export default {
     }
     .buttonDiv { 
         text-align: center;
+    }
+    .isLoading button {
+        background: rgba(0, 170, 0, 0.7);
+        cursor: default;
     }
 </style>

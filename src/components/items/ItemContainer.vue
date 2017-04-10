@@ -1,14 +1,22 @@
 <template>
     <div>
-        INBOX:
-        <div class="itemContainer">
-            <app-item v-for="item in inboxItems" :key="item.id" :itemSender="item.sender" :itemUrl="item.url"></app-item>
+        <div class="itemContainer" v-if="inboxSelected">
+            <app-item v-for="item in inboxItems" :key="item.id" 
+                :itemSender="item.sender" 
+                :itemUrl="item.url"
+                :itemDuration="item.duration"
+                :itemNotes="item.note"
+                :itemType="item.type">
+            </app-item>
         </div>
-        
-        <br />
-        OUTBOX:
-        <div class="itemContainer">
-            <app-item v-for="item in outboxItems" :key="item.id" :itemOwner="item.owner" :itemUrl="item.url"></app-item>
+        <div class="itemContainer" v-if="!inboxSelected">
+            <app-item v-for="item in outboxItems" :key="item.id" 
+                :itemOwner="item.owner" 
+                :itemUrl="item.url"
+                :itemDuration="item.duration"
+                :itemNotes="item.note"
+                :itemType="item.type">
+            </app-item>
         </div>
     </div>
 </template>
@@ -22,7 +30,8 @@ export default{
     data() {
         return {
             inboxItems: [],
-            outboxItems: []
+            outboxItems: [],
+            inboxSelected: true,
         }
     },
     props: {
@@ -33,11 +42,11 @@ export default{
     },
     watch: {
         sessionInfo() {
-            this.getItems();
+            this.getnbox();
         }
     },
     methods: {
-        getItems() {
+        getInbox() {
             console.log("getting inbox");
             var options = {
                 url: Consts.BASE_API_URL + "/" + Consts.INBOX_ENDPOINT,
@@ -51,7 +60,11 @@ export default{
                 this.$http(options).then((response) => {
                     this.inboxItems = response.body;
                 }, (response) => {
-                    console.log("Error: Couldn't get inbox");
+                    console.log("Error: Couldn't get inbox");                    
+                    
+                    if (response.status == 401) {
+                        EventBus.$emit(Consts.EVENT_SESSION_DESTROYED);
+                    }
                 });
             }
         },
@@ -69,22 +82,35 @@ export default{
                 this.$http(options).then((response) => {
                     this.outboxItems = response.body;
                 }, (response) => {
-                    console.log("Error: Couldn't get inbox");
+                    console.log("Error: Couldn't get outbox: ");
+
+                    if (response.status == 401) {
+                        EventBus.$emit(Consts.EVENT_SESSION_DESTROYED);
+                    }
                 });
             }
         }
     },
     created() {
-        this.getItems();
+        this.getInbox();
         this.getOutbox();
+
+        EventBus.$on(Consts.EVENT_ITEM_CREATED, () => {
+            this.getInbox();
+            this.getOutbox();
+        });
+
+        EventBus.$on(Consts.EVENT_INBOX_SELECTED, () => {
+            this.inboxSelected=true;
+        });
+
+        EventBus.$on(Consts.EVENT_OUTBOX_SELECTED, () => {
+            this.inboxSelected=false;
+        });
+
     }
 }
 </script>
 
 <style>
-.itemContainer {
-    padding: 10px;
-    border: 1px solid black;
-    margin-top: 20px;
-}
 </style>

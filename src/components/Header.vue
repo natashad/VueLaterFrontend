@@ -3,13 +3,14 @@
         <h1 class="logo">NagBag</h1>
         
         <div v-if="sessionInfo.token" class="myAccount">
-            Welcome {{sessionInfo.username}} <button @click="logout">Logout</button>      
+            Welcome {{sessionInfo.name}} <button @click="logout">Logout</button>      
         </div>
     </div>
 </template>
 
 <script>
 import {EventBus} from '../main.js';
+import Consts from '../constants.js';
 
 export default {
     data() {
@@ -22,7 +23,7 @@ export default {
     methods: {
         logout(event) {
             event.preventDefault();
-            EventBus.$emit('sessionDestroyed')
+            EventBus.$emit(Consts.EVENT_SESSION_DESTROYED);
         }
     },
 }

@@ -8,8 +8,10 @@ export default {
     OUTBOX_ENDPOINT: "outbox",
     LOGIN_ENDPOINT: "login",
 
-    USER_PASSWORD: 'password',
-    USER_ID: 1,
-    USER_NAME: 'natasha'
+    EVENT_ITEM_CREATED: "itemCreated",
+    EVENT_SESSION_CREATED: "sessionCreated",
+    EVENT_SESSION_DESTROYED: "sessionDestroyed",
+    EVENT_INBOX_SELECTED: "inboxSelected",
+    EVENT_OUTBOX_SELECTED: "outboxSelected"
 
 }
