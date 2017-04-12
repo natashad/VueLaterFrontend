@@ -1,7 +1,7 @@
 <template>
     <div>
         <div class="itemContainer" v-if="inboxSelected">
-            <app-item v-for="item in inboxItems" :key="item.id" 
+            <app-item v-for="item in filteredInbox" :key="item.id" 
                 :itemSender="item.sender" 
                 :itemUrl="item.url"
                 :itemDuration="item.duration"
@@ -10,7 +10,7 @@
             </app-item>
         </div>
         <div class="itemContainer" v-if="!inboxSelected">
-            <app-item v-for="item in outboxItems" :key="item.id" 
+            <app-item v-for="item in filteredOutbox" :key="item.id" 
                 :itemOwner="item.owner" 
                 :itemUrl="item.url"
                 :itemDuration="item.duration"
@@ -36,14 +36,33 @@ export default{
     },
     props: {
         sessionInfo: Object,
+        durationFilter: Array,
+        typeFilter: Array,
+        friendFilter: String
     },
     components: {
         appItem: Item
     },
+    computed: {
+        filteredInbox() {
+            return this.inboxItems.filter((item) => {
+                return ((!this.durationFilter.length || this.durationFilter.includes(item.duration)) &&
+                    (!this.typeFilter.length || this.typeFilter.includes(item.type)) &&
+                    (!this.friendFilter || item.sender.startsWith(this.friendFilter)))
+            });
+        },
+        filteredOutbox() {
+            return this.outboxItems.filter((item) => {
+                return ((!this.durationFilter.length || this.durationFilter.includes(item.duration)) &&
+                    (!this.typeFilter.length || this.typeFilter.includes(item.type)) &&
+                    (!this.friendFilter || item.owner.startsWith(this.friendFilter)))
+            });
+        }
+    },
     watch: {
         sessionInfo() {
             this.getnbox();
-        }
+        },
     },
     methods: {
         getInbox() {
@@ -56,6 +75,7 @@ export default{
                     Authorization: 'Basic ' + btoa(this.sessionInfo.token + ":unused")
                 }
             }
+            
             if (this.sessionInfo.token) {
                 this.$http(options).then((response) => {
                     this.inboxItems = response.body;
@@ -108,7 +128,8 @@ export default{
             this.inboxSelected=false;
         });
 
-    }
+    },
+
 }
 </script>
 

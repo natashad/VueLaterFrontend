@@ -10,7 +10,11 @@
         </div>
         <div class="mainContent">
           <app-search-bar></app-search-bar>          
-          <app-items :sessionInfo="sessionInfo"></app-items>
+          <app-items :sessionInfo="sessionInfo" 
+                     :durationFilter="durationFilter"
+                     :typeFilter="typeFilter"
+                     :friendFilter="friendFilter">
+          </app-items>
         </div>
       </div>
     </div>
@@ -30,7 +34,10 @@ import Consts from './constants.js';
 export default {
   data() {
     return {
-      sessionInfo: {}
+      sessionInfo: {},
+      durationFilter: [],
+      typeFilter: [],
+      friendFilter: ''
     }
   },
   computed: {
@@ -66,6 +73,15 @@ export default {
       this.sessionInfo = {};
       this.$cookie.delete('sessionToken');
       this.$cookie.delete('fname');
+    });
+    EventBus.$on(Consts.EVENT_FILTERS_CHANGED_DURATION, (filters) => {
+      this.durationFilter = filters;
+    });
+    EventBus.$on(Consts.EVENT_FILTERS_CHANGED_TYPE, (filters) => {
+      this.typeFilter = filters;
+    });
+    EventBus.$on(Consts.EVENT_FILTERS_CHANGED_FRIEND, (filters) => {
+      this.friendFilter = filters;
     });
   }
 }

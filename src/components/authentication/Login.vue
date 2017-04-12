@@ -102,6 +102,7 @@ export default {
                         EventBus.$emit(Consts.EVENT_SESSION_CREATED, {token: token, fname: this.firstName});
                         this.email = '';
                         this.password = '';
+                        console.log(response.body);
                     }
                     this.isLoading=false;
                 }, 

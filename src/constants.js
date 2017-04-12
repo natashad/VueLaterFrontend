@@ -12,6 +12,9 @@ export default {
     EVENT_SESSION_CREATED: "sessionCreated",
     EVENT_SESSION_DESTROYED: "sessionDestroyed",
     EVENT_INBOX_SELECTED: "inboxSelected",
-    EVENT_OUTBOX_SELECTED: "outboxSelected"
+    EVENT_OUTBOX_SELECTED: "outboxSelected",
+    EVENT_FILTERS_CHANGED_DURATION: "filtersChangedDuration",
+    EVENT_FILTERS_CHANGED_TYPE: "filtersChangedType",
+    EVENT_FILTERS_CHANGED_FRIEND: "filtersChangedFriend",    
 
 }

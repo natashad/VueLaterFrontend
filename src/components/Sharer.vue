@@ -17,11 +17,19 @@
                     </div>
                     <div>
                         <label for="type">Type (Optional):</label><br />
-                        <input id="type" v-model="type" type="text" />
+                        <select v-model="type" id="type">
+                            <option v-for="option in typeOptions" v-bind:value="option.value">
+                                {{ option.text }}
+                            </option>
+                        </select>
                     </div>
                     <div>
                         <label for="duration">Duration (Optional):</label><br />
-                        <input id="duration" v-model="duration" type="text" />
+                        <select v-model="duration" id="duration">
+                            <option v-for="option in durationOptions" v-bind:value="option.value">
+                                {{ option.text }}
+                            </option>
+                        </select>
                     </div>
                     <div>
                         <label for="notes">Notes (Optional):</label><br />
@@ -48,9 +56,19 @@ export default {
             isSendNag: false,
             recipient: '',
             url: '',
-            type: '',
-            duration: '',
+            type: 'watch',
+            duration: 'medium',
             notes: '',
+            typeOptions: [
+                {text: 'Watch', value: 'watch'},
+                {text: 'Read', value: 'read'},
+                {text: 'Listen', value: 'listen'}                
+            ],
+            durationOptions: [
+                {text: 'Short', value: 'short'},
+                {text: 'Medium', value: 'medium'},
+                {text: 'Long', value: 'long'}                
+            ],
         }
     },
     props: {
@@ -138,7 +156,7 @@ export default {
         font-weight: bold;
     }
 
-    .modal input, .modal textarea {
+    .modal input, .modal textarea, .modal select {
         width: 100%;
         margin: 10px 0 20px 0;
         font-size: 15px;

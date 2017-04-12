@@ -3,7 +3,7 @@
         <h1 class="logo">NagBag</h1>
         
         <div v-if="sessionInfo.token" class="myAccount">
-            Welcome {{sessionInfo.name}} <button @click="logout">Logout</button>      
+            Welcome {{sessionInfo.name}} <button class="logout" @click="logout">Log Out</button>      
         </div>
     </div>
 </template>
@@ -33,6 +33,7 @@ export default {
     .header {
         border-bottom: 5px solid black;
         padding: 10px;
+        padding-top: 0;
     }
 
     .logo {
@@ -40,5 +41,19 @@ export default {
     }
     .myAccount {
         float: right;
+    }
+    .logout {
+        background: linear-gradient(#00CC00, #00AA00);
+        color: #FFF;
+        border-top: none;
+        border-radius: 5px;
+        padding: 10px;
+        border-top-left-radius: 0;
+        border-top-right-radius: 0;
+        font-size: 14px;
+        font-weight: bold;
+        border: 1px solid #DDD;
+        cursor: pointer;
+        margin-left: 10px;
     }
 </style>
