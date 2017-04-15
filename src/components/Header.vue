@@ -3,7 +3,7 @@
         <h1 class="logo">NagBag</h1>
         
         <div v-if="sessionInfo.token" class="myAccount">
-            Welcome {{sessionInfo.name}} <button class="logout" @click="logout">Log Out</button>      
+            Welcome {{sessionInfo.fname}} <button class="logout" @click="logout">Log Out</button>      
         </div>
     </div>
 </template>

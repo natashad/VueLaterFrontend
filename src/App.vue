@@ -1,15 +1,20 @@
 <template>
-  <div>
+  <div class="appContent">
     <app-header :sessionInfo="sessionInfo"></app-header>
     <app-login v-if="!loggedIn"></app-login>
     <div v-if="loggedIn">
-      <app-sharer :sessionInfo="sessionInfo"></app-sharer>
+      <app-sharer :sessionInfo="sessionInfo" :friends="friends"></app-sharer>
       <div>
         <div class="sidebar">
           <app-sidebar></app-sidebar>
         </div>
         <div class="mainContent">
-          <app-search-bar></app-search-bar>          
+          <app-search-bar></app-search-bar>
+          <app-filter-display 
+                     :durationFilter="durationFilter"
+                     :typeFilter="typeFilter"
+                     :friendFilter="friendFilter">
+          </app-filter-display>
           <app-items :sessionInfo="sessionInfo" 
                      :durationFilter="durationFilter"
                      :typeFilter="typeFilter"
@@ -28,6 +33,7 @@ import SearchBar from './components/SearchBar.vue';
 import Items from './components/items/ItemContainer.vue';
 import Login from './components/authentication/Login.vue';
 import Sidebar from './components/sidebar/Sidebar.vue';
+import FilterDisplay from './components/FiltersDisplay.vue';
 import {EventBus} from './main.js';
 import Consts from './constants.js';
 
@@ -37,7 +43,8 @@ export default {
       sessionInfo: {},
       durationFilter: [],
       typeFilter: [],
-      friendFilter: ''
+      friendFilter: '',
+      friends: [],
     }
   },
   computed: {
@@ -52,27 +59,52 @@ export default {
     'appLogin': Login,
     'appSidebar': Sidebar,
     'appSearchBar': SearchBar,
+    'appFilterDisplay': FilterDisplay,
   }, 
+  methods: {
+    getFriends() {
+      var options = {
+        url: Consts.BASE_API_URL + "/" + Consts.FOLLOWING_ENDPOINT,
+        method: 'GET',
+        headers: 
+        {
+          Authorization: 'Basic ' + btoa(this.sessionInfo.token + ":" + "unused")
+        }
+      }
+      this.$http(options).then(
+        (response) => {
+          this.friends = response.body;
+        },
+        (response) => {
+          //error
+          console.log("Error while getting friends");
+        }
+      );
+    }
+  },
   created() {
 
     if (this.$cookie.get('sessionToken')) {
-      console.log("Setting session info from cookie!");
       this.sessionInfo = {
         token: this.$cookie.get('sessionToken'),
-        fname: this.$cookie.get('fname')
+        fname: this.$cookie.get('fname'),
+        uid: this.$cookie.get('uid'),
       }
+      this.getFriends();
     }
 
     EventBus.$on(Consts.EVENT_SESSION_CREATED, (sessionInfo) => {
       this.sessionInfo = sessionInfo;
       this.$cookie.set('sessionToken', sessionInfo.token);
       this.$cookie.set('fname', sessionInfo.fname);
-      
+      this.$cookie.set('uid', sessionInfo.fname);
+      this.getFriends();
     });
     EventBus.$on(Consts.EVENT_SESSION_DESTROYED, () => {
       this.sessionInfo = {};
       this.$cookie.delete('sessionToken');
       this.$cookie.delete('fname');
+      this.$cookie.delete('uid');
     });
     EventBus.$on(Consts.EVENT_FILTERS_CHANGED_DURATION, (filters) => {
       this.durationFilter = filters;
@@ -82,6 +114,16 @@ export default {
     });
     EventBus.$on(Consts.EVENT_FILTERS_CHANGED_FRIEND, (filters) => {
       this.friendFilter = filters;
+    });
+    EventBus.$on(Consts.EVENT_MODAL_IS_OPEN, (isOpen) => {
+      var body = document.body;
+      if (isOpen) {
+        if (!body.classList.contains("noScroll")) {
+          body.classList.add("noScroll");
+        }
+      } else {
+        body.classList.remove("noScroll");
+      }
     });
   }
 }
@@ -95,6 +137,10 @@ export default {
     padding: 0;
   }
 
+  body.noScroll {
+    overflow: hidden;
+  }
+
   .sidebar {
     width: 200px;
     float: left;
@@ -105,7 +151,6 @@ export default {
     max-width: calc(100% - 200px);
     padding-left: 20px;
     box-sizing: border-box;
-
   }
 
 </style>

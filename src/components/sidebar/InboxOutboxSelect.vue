@@ -51,7 +51,8 @@ export default {
         font-weight: bold;
     }
     .sidetab.selected {
-        background: #add8e6;
+        background: #007fff;
         cursor: default;
+        color: white;
     }
 </style>

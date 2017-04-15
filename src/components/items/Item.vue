@@ -50,7 +50,7 @@ export default {
         border-bottom-right-radius: 5px;
     }
     .itemHeader {
-        background: #adbce6;
+        background: #4da5ff;
         font-size: 12px;
         border-bottom: 1px solid #EEE;
         padding: 8px;
