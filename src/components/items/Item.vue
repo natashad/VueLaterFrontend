@@ -56,6 +56,7 @@ export default {
         padding: 8px;
         font-weight: bold;
         text-align: center;
+        color: white;
     }
     .itemContent {
         padding: 10px;

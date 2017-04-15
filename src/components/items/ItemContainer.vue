@@ -2,7 +2,7 @@
     <div>
         <div class="itemContainer" v-if="inboxSelected">
             <app-item v-for="item in filteredInbox" :key="item.id" 
-                :itemSender="item.sender" 
+                :itemSender="getFullName(item.sender)" 
                 :itemUrl="item.url"
                 :itemDuration="item.duration"
                 :itemNotes="item.note"
@@ -11,7 +11,7 @@
         </div>
         <div class="itemContainer" v-if="!inboxSelected">
             <app-item v-for="item in filteredOutbox" :key="item.id" 
-                :itemOwner="item.owner" 
+                :itemOwner="getFullName(item.owner)" 
                 :itemUrl="item.url"
                 :itemDuration="item.duration"
                 :itemNotes="item.note"
@@ -38,7 +38,8 @@ export default{
         sessionInfo: Object,
         durationFilter: Array,
         typeFilter: Array,
-        friendFilter: String
+        friendFilter: Array,
+        friends: Array
     },
     components: {
         appItem: Item
@@ -48,14 +49,33 @@ export default{
             return this.inboxItems.filter((item) => {
                 return ((!this.durationFilter.length || this.durationFilter.includes(item.duration)) &&
                     (!this.typeFilter.length || this.typeFilter.includes(item.type)) &&
-                    (!this.friendFilter || item.sender.startsWith(this.friendFilter)))
+                    (!this.friendFilter.length || (
+                        this.friendFilter.some((filter) => {
+                            return (
+                                item.sender.includes(filter) || 
+                                this.getFullName(item.sender).includes(filter))
+                            })
+                        )
+                    )
+                )
             });
         },
         filteredOutbox() {
             return this.outboxItems.filter((item) => {
                 return ((!this.durationFilter.length || this.durationFilter.includes(item.duration)) &&
                     (!this.typeFilter.length || this.typeFilter.includes(item.type)) &&
-                    (!this.friendFilter || item.owner.startsWith(this.friendFilter)))
+                    (!this.friendFilter.length || (
+                        this.friendFilter.some((filter) => {
+                            console.log(filter);
+                            console.log(item.owner);
+                            console.log("xxx");
+                            return (
+                                item.owner.includes(filter) || 
+                                this.getFullName(item.owner).includes(filter))
+                            })
+                        )
+                    )
+                )
             });
         }
     },
@@ -65,6 +85,17 @@ export default{
         },
     },
     methods: {
+        getFullName(email) {
+            var friend = this.friends.filter(friend => {
+                return friend.email == email;
+            });
+            if (friend.length) {
+                return friend[0].first_name + " " + friend[0].last_name;
+            } else if (this.sessionInfo.email == email) {
+                return this.sessionInfo.fname + " " + this.sessionInfo.lname;
+            }
+            return email;
+        },
         getInbox() {
             console.log("getting inbox");
             var options = {

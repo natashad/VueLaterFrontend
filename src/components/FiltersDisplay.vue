@@ -6,8 +6,8 @@
         <div @click="removeFilter(filter, 'durationFilter')" class="filterTag" v-for="filter in durationFilter">
             <span>x</span> {{filter}}
         </div>
-        <div @click="removeFilter(null, 'friendFilter')" class="filterTag" v-if="friendFilter">
-            <span>x</span> {{friendFilter}}
+        <div @click="removeFilter(null, 'friendFilter')" class="filterTag" v-for="filter in friendFilter">
+            <span>x</span> {{filter}}
         </div>
     </div>
 </template>
@@ -20,12 +20,13 @@ export default {
     props: {
         durationFilter: Array,
         typeFilter: Array,
-        friendFilter: String
+        friendFilter: Array
     },
     methods: {
         removeFilter(filterVal, filterType) {
             if (filterType === "friendFilter") {
-                EventBus.$emit(Consts.EVENT_FILTERS_CHANGED_FRIEND, '')
+                EventBus.$emit(Consts.EVENT_FILTERS_CHANGED_FRIEND, 
+                            this.friendFilter.splice(this.friendFilter.indexOf(filterVal),1))
             }
             if (filterType === "durationFilter") {
                 EventBus.$emit(Consts.EVENT_FILTERS_CHANGED_DURATION, 

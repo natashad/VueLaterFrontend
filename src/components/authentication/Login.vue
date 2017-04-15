@@ -103,7 +103,8 @@ export default {
                             token: token,
                             fname: response.body.first_name, 
                             lname: response.body.last_name,
-                            uid: response.body.id});
+                            uid: response.body.id,
+                            email: response.body.email});
                         this.email = '';
                         this.password = '';
                         console.log(response.body);

@@ -129,7 +129,7 @@ export default {
             this.suggestionsOpen = false;
         },
         openSuggestions() {
-            if(!this.suggestionsOpen) {
+            if(!this.suggestionsOpen && this.suggestions.length>0) {
                 this.suggestionsOpen = true;
                 this.selectedSuggestion = this.suggestions[0];
             }

@@ -18,7 +18,8 @@
           <app-items :sessionInfo="sessionInfo" 
                      :durationFilter="durationFilter"
                      :typeFilter="typeFilter"
-                     :friendFilter="friendFilter">
+                     :friendFilter="friendFilter"
+                     :friends="friends">
           </app-items>
         </div>
       </div>
@@ -43,7 +44,7 @@ export default {
       sessionInfo: {},
       durationFilter: [],
       typeFilter: [],
-      friendFilter: '',
+      friendFilter: [],
       friends: [],
     }
   },

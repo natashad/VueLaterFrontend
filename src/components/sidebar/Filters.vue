@@ -27,7 +27,7 @@
         </div>
         <div class="filter">
             <label class="filterName" for="friend">Friend: </label>
-            <input id="friend" type="text" v-model="friendFilter" />
+            <input id="friend" type="text" v-model="friendFilterSingle" @keyup.enter="addToFriendFilter()" />
         </div>
     </div>
 </template>
@@ -41,7 +41,8 @@ export default {
         return {
             durationFilter: [],
             typeFilter: [],
-            friendFilter: '',
+            friendFilterSingle: '',
+            friendFilter: [],
         }
     },
     watch: {
@@ -53,6 +54,12 @@ export default {
         },
         friendFilter: function(val) {
             EventBus.$emit(Consts.EVENT_FILTERS_CHANGED_FRIEND, val);
+        }
+    },
+    methods: {
+        addToFriendFilter() {
+            this.friendFilter.push(this.friendFilterSingle);
+            this.friendFilterSingle = ''
         }
     }
 }
