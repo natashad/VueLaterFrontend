@@ -66,9 +66,6 @@ export default{
                     (!this.typeFilter.length || this.typeFilter.includes(item.type)) &&
                     (!this.friendFilter.length || (
                         this.friendFilter.some((filter) => {
-                            console.log(filter);
-                            console.log(item.owner);
-                            console.log("xxx");
                             return (
                                 item.owner.includes(filter) || 
                                 this.getFullName(item.owner).includes(filter))

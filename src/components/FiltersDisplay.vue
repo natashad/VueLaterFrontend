@@ -6,7 +6,7 @@
         <div @click="removeFilter(filter, 'durationFilter')" class="filterTag" v-for="filter in durationFilter">
             <span>x</span> {{filter}}
         </div>
-        <div @click="removeFilter(null, 'friendFilter')" class="filterTag" v-for="filter in friendFilter">
+        <div @click="removeFilter(filter, 'friendFilter')" class="filterTag" v-for="filter in friendFilter">
             <span>x</span> {{filter}}
         </div>
     </div>
